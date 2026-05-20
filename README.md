@@ -2,6 +2,10 @@
 
 Smart parking sensor — ESP32-S2 Mini + VL53L1X + MAX7219 8×8 LED matrix.
 
+<p align="center">
+  <img src="assets/screenshot1.png" width="200" />
+</p>
+
 ## Hardware
 
 | Component | Part |

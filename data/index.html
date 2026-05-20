@@ -159,6 +159,10 @@
               <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Reset</span>
               <span id="dbg-reset" class="text-sm">—</span>
             </div>
+            <div class="flex items-center justify-between px-4 py-2.5">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Display</span>
+              <span id="dbg-display" class="text-sm font-mono">—</span>
+            </div>
           </div>
         </div>
       </div>
@@ -244,7 +248,8 @@
     const $dbgHost   = document.getElementById('dbg-hostname');
     const $dbgIp     = document.getElementById('dbg-ip');
     const $dbgSsid   = document.getElementById('dbg-ssid');
-    const $dbgReset  = document.getElementById('dbg-reset');
+    const $dbgReset   = document.getElementById('dbg-reset');
+    const $dbgDisplay = document.getElementById('dbg-display');
     const $navTitle  = document.getElementById('navTitle');
     const $saveMsg   = document.getElementById('save-msg');
     const $wsBar     = document.getElementById('ws-bar');
@@ -370,6 +375,11 @@
       if (d.ip)           $dbgIp.textContent    = d.ip;
       if (d.ssid)         $dbgSsid.textContent  = d.ssid;
       if (d.reset_reason) $dbgReset.textContent = d.reset_reason;
+      if (typeof d.display === 'boolean') {
+        $dbgDisplay.textContent = d.display ? 'ON' : 'OFF';
+        $dbgDisplay.className   = 'text-sm font-mono ' + (d.display
+          ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500');
+      }
       if (d.version && !$version.textContent.includes(d.version)) {
         const a = document.createElement('a');
         a.href = '/update.html';
