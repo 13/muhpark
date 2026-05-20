@@ -1,4 +1,4 @@
-# muhpark
+# <img src="assets/muhpark.png" width="30" height="30" /> MuhPark
 
 Smart parking sensor — ESP32-S2 Mini + VL53L1X + MAX7219 8×8 LED matrix.
 
