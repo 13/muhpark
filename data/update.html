@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" id="themeColor" content="#f9fafb" />
+  <title>mpark — Firmware</title>
+  <link rel="icon" href="favicon.ico" />
+  <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
+  <script src="js/tailwind.js"></script>
+  <style type="text/tailwindcss">
+    @variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col">
+
+  <div id="ws-bar" class="h-1 transition-colors duration-300"></div>
+
+  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+    <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <img src="/img/mpark.png" alt="" class="w-7 h-7" />
+        <span id="navTitle" class="font-semibold text-sm text-gray-800 dark:text-gray-100">mpark</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/" title="Dashboard" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd"/></svg>
+        </a>
+        <a href="/update.html" title="Firmware" class="text-gray-800 dark:text-gray-100 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M9.25 13.25a.75.75 0 0 0 1.5 0V4.636l2.955 3.129a.75.75 0 0 0 1.09-1.03l-4.25-4.5a.75.75 0 0 0-1.09 0l-4.25 4.5a.75.75 0 1 0 1.09 1.03L9.25 4.636v8.614Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+        </a>
+        <a href="/settings.html" title="Settings" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
+        </a>
+        <button id="themeBtn" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors"></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Tailwind safelist -->
+  <div class="hidden bg-green-500 bg-red-500
+              border-blue-400 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-600"></div>
+
+  <main class="flex-1 py-4">
+    <div class="max-w-2xl mx-auto px-4 flex flex-col gap-4">
+
+      <!-- Upload card -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Firmware Update</span>
+        </div>
+        <div class="p-4 flex flex-col gap-3">
+          <div id="dropZone"
+               class="relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed
+                      border-gray-300 dark:border-gray-700 py-8 px-4 cursor-pointer
+                      hover:border-blue-400 dark:hover:border-blue-600
+                      hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors">
+            <input type="file" id="file" accept=".bin" multiple
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+            <svg class="w-8 h-8 text-gray-400 dark:text-gray-500 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <p class="text-sm text-gray-500 dark:text-gray-400 pointer-events-none text-center">
+              Drop firmware here or <span class="text-blue-600 dark:text-blue-400 font-medium">browse</span>
+            </p>
+            <p id="fileHint" class="text-xs text-gray-400 dark:text-gray-500 pointer-events-none min-h-[1rem] text-center"></p>
+          </div>
+
+          <button id="uploadBtn" disabled
+                  class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed
+                         text-white py-3 px-4 rounded-xl transition-colors font-medium text-sm min-h-[44px]">
+            Upload
+          </button>
+        </div>
+      </div>
+
+      <!-- Device actions card -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Device</span>
+        </div>
+        <div class="p-4">
+          <a href="/reboot"
+             class="flex items-center justify-center w-full
+                    bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700
+                    text-gray-700 dark:text-gray-200
+                    py-3 px-4 rounded-xl transition-colors text-sm min-h-[44px]">
+            Reboot
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="py-3 text-center border-t border-gray-200 dark:border-gray-800">
+    <span id="version" class="text-xs text-gray-400 dark:text-gray-500"></span>
+  </footer>
+
+  <!-- OTA progress modal -->
+  <div id="updateModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-center w-full max-w-sm">
+      <div id="spinner" class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p id="modalStep" class="font-semibold text-gray-900 dark:text-white text-base"></p>
+      <p id="modalMsg"  class="text-gray-500 dark:text-gray-400 text-sm mt-1"></p>
+    </div>
+  </div>
+
+  <script>
+    // ── Theme ──────────────────────────────────────────────────────────────────
+    const html       = document.documentElement;
+    const themeBtn   = document.getElementById('themeBtn');
+    const themeColor = document.getElementById('themeColor');
+
+    function applyTheme(dark) {
+      html.classList.toggle('dark', dark);
+      themeBtn.innerHTML = dark
+        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06L5.404 4.343a.75.75 0 0 0-1.06 1.06l1.06 1.061Z"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z" clip-rule="evenodd"/></svg>';
+      themeColor.content = dark ? '#030712' : '#f9fafb';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    applyTheme(html.classList.contains('dark'));
+    themeBtn.addEventListener('click', () => applyTheme(!html.classList.contains('dark')));
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const wsBar      = document.getElementById('ws-bar');
+    const elFile     = document.getElementById('file');
+    const elHint     = document.getElementById('fileHint');
+    const elDropZone = document.getElementById('dropZone');
+    const elUploadBtn = document.getElementById('uploadBtn');
+    const elModal    = document.getElementById('updateModal');
+    const elStep     = document.getElementById('modalStep');
+    const elMsg      = document.getElementById('modalMsg');
+    const elSpinner  = document.getElementById('spinner');
+    const elVersion  = document.getElementById('version');
+    const navTitle   = document.getElementById('navTitle');
+
+    // ── WebSocket (for nav title + version) ────────────────────────────────────
+    function setWsBar(state) {
+      wsBar.className = 'h-1 transition-colors duration-300 ' + (
+        state === 'connected'    ? 'bg-green-500' :
+        state === 'disconnected' ? 'bg-red-500'   : 'bg-gray-400');
+    }
+    setWsBar('connecting');
+
+    let prevVersion = null;
+    function connect() {
+      const ws = new WebSocket(`ws://${location.host}/ws`);
+      ws.onopen  = () => setWsBar('connected');
+      ws.onclose = () => { setWsBar('disconnected'); setTimeout(connect, 10_000); };
+      ws.onmessage = (e) => {
+        const d = JSON.parse(e.data);
+        if (d.description != null) navTitle.textContent = d.description || 'mpark';
+        if (d.version && d.version !== prevVersion) {
+          prevVersion = d.version;
+          const a = document.createElement('a');
+          a.href = '/update.html';
+          a.className = 'hover:text-gray-700 dark:hover:text-gray-300 transition-colors';
+          a.textContent = d.version;
+          elVersion.replaceChildren(a);
+        }
+      };
+    }
+
+    // ── File selection ─────────────────────────────────────────────────────────
+    let selectedFiles = [];
+
+    function fmtBytes(n) {
+      return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB'
+           : n >= 1024    ? (n / 1024).toFixed(0) + ' KB'
+           : n + ' B';
+    }
+
+    function updateFileUI(files) {
+      selectedFiles = files;
+      if (!files.length) { elHint.textContent = ''; elUploadBtn.disabled = true; return; }
+      const isFs  = files.some(f => f.name.toLowerCase().includes('littlefs'));
+      const names = files.map(f => `${f.name} (${fmtBytes(f.size)})`).join(', ');
+      const label = files.length > 1 ? (isFs ? 'firmware + filesystem' : '') : (isFs ? 'filesystem' : 'firmware');
+      elHint.textContent = label ? `${names} — ${label}` : names;
+      elUploadBtn.disabled = false;
+    }
+
+    elFile.addEventListener('change', () => updateFileUI([...elFile.files]));
+
+    elDropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      elDropZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-blue-950/30', 'dark:border-blue-600');
+    });
+    ['dragleave', 'dragend'].forEach(evt => elDropZone.addEventListener(evt, () => {
+      elDropZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-blue-950/30', 'dark:border-blue-600');
+    }));
+    elDropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      elDropZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-blue-950/30', 'dark:border-blue-600');
+      const files = [...e.dataTransfer.files].filter(f => f.name.endsWith('.bin'));
+      if (files.length) updateFileUI(files);
+    });
+
+    // ── Modal ──────────────────────────────────────────────────────────────────
+    function showModal(step, msg = '') {
+      elStep.textContent = step;
+      elMsg.textContent  = msg;
+      elSpinner.classList.remove('hidden');
+      elModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function setModalMsg(step, msg = '', hideSpinner = false) {
+      elStep.textContent = step;
+      elMsg.textContent  = msg;
+      if (hideSpinner) elSpinner.classList.add('hidden');
+    }
+    function hideModal() {
+      elModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function waitForReboot() {
+      let tries = 0;
+      (function check() {
+        fetch('/ping')
+          .then(r  => { if (r.ok) { hideModal(); setTimeout(() => location.reload(), 1500); }
+                        else if (++tries < 60) setTimeout(check, 2000);
+                        else hideModal(); })
+          .catch(() => { if (++tries < 60) setTimeout(check, 2000); else hideModal(); });
+      })();
+    }
+
+    // ── OTA upload ─────────────────────────────────────────────────────────────
+    elUploadBtn.addEventListener('click', async () => {
+      if (!selectedFiles.length) return;
+
+      const fw    = selectedFiles.filter(f => !f.name.toLowerCase().includes('littlefs'));
+      const fs    = selectedFiles.filter(f =>  f.name.toLowerCase().includes('littlefs'));
+      const queue = [...fw, ...fs];
+
+      showModal(`Uploading ${queue[0].name}…`);
+      try {
+        for (let i = 0; i < queue.length; i++) {
+          const f  = queue[i];
+          setModalMsg(`(${i + 1}/${queue.length}) ${f.name}`, 'Please wait…');
+          const fd = new FormData();
+          fd.append('file', f, f.name);
+          const data = await fetch('/update', { method: 'POST', body: fd }).then(r => r.json());
+          if (!data.success) throw new Error(data.message ?? 'Upload failed');
+        }
+
+        setModalMsg('All files uploaded', 'Rebooting…');
+        await fetch('/reboot').catch(() => {});
+        setModalMsg('Rebooting…', 'Waiting for device to come back online.');
+        waitForReboot();
+
+      } catch (err) {
+        const p = document.createElement('p');
+        p.className   = 'text-red-600 dark:text-red-400 font-medium';
+        p.textContent = err.message;
+        setModalMsg('Update failed', '', true);
+        elMsg.replaceChildren(p);
+        setTimeout(hideModal, 5000);
+      }
+    });
+
+    window.addEventListener('load', connect);
+  </script>
+</body>
+</html>

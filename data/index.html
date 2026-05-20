@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" id="themeColor" content="#f9fafb" />
+  <title>mpark</title>
+  <link rel="icon" href="favicon.ico" />
+  <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
+  <script src="js/tailwind.js"></script>
+  <style type="text/tailwindcss">
+    @variant dark (&:where(.dark, .dark *));
+  </style>
+  <style>
+    #big { font-size: clamp(5rem, 22vw, 11rem); transition: color .4s; }
+    #hero-card[data-state="active"]       { box-shadow: 0 0 60px rgba(34,197,94,.12),  0 4px 20px rgba(0,0,0,.08); }
+    #hero-card[data-state="parked"]       { box-shadow: 0 0 60px rgba(56,189,248,.15), 0 4px 20px rgba(0,0,0,.08); }
+    .dark #hero-card[data-state="active"] { box-shadow: 0 0 80px rgba(34,197,94,.09),  0 4px 32px rgba(0,0,0,.5); }
+    .dark #hero-card[data-state="parked"] { box-shadow: 0 0 80px rgba(56,189,248,.11), 0 4px 32px rgba(0,0,0,.5); }
+    :root  { --bar-off: #e5e7eb; --rssi-off: #d1d5db; }
+    html.dark { --bar-off: #374151; --rssi-off: #4b5563; }
+    input[type=range] { -webkit-appearance:none; appearance:none; flex:1; height:2px; border-radius:2px; outline:none; background:#e2e8f0; }
+    .dark input[type=range] { background:#334155; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:#22c55e; cursor:pointer; transition:transform .15s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.25); }
+    input[type=range]::-moz-range-thumb { width:15px; height:15px; border-radius:50%; background:#22c55e; cursor:pointer; border:none; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .live-dot { animation: blink 2s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col">
+
+  <div id="ws-bar" class="h-1 transition-colors duration-300"></div>
+
+  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+    <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <img src="/img/mpark.png" alt="" class="w-7 h-7" />
+        <span id="navTitle" class="font-semibold text-sm text-gray-800 dark:text-gray-100">mpark</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/" title="Dashboard" class="text-gray-800 dark:text-gray-100 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd"/></svg>
+        </a>
+        <a href="/update.html" title="Firmware" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M9.25 13.25a.75.75 0 0 0 1.5 0V4.636l2.955 3.129a.75.75 0 0 0 1.09-1.03l-4.25-4.5a.75.75 0 0 0-1.09 0l-4.25 4.5a.75.75 0 1 0 1.09 1.03L9.25 4.636v8.614Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+        </a>
+        <a href="/settings.html" title="Settings" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
+        </a>
+        <button id="themeBtn" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors"></button>
+        <button onclick="location.reload()" title="Refresh" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Tailwind safelist -->
+  <div class="hidden
+    text-green-500 text-sky-400 text-gray-300 dark:text-gray-700
+    border-green-400/40 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400
+    border-orange-400/40 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400
+    text-yellow-600 dark:text-yellow-400 text-red-500 dark:text-red-400
+    bg-green-500 bg-red-500 bg-gray-400
+  "></div>
+
+  <main class="flex-1 py-4">
+    <div class="max-w-2xl mx-auto px-4 flex flex-col gap-4">
+
+      <!-- Hero card -->
+      <div id="hero-card" data-state="sleeping"
+           class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col items-center gap-3 py-8 px-4 transition-shadow duration-500">
+        <div id="big" class="font-black leading-none tracking-tighter text-gray-300 dark:text-gray-700">—</div>
+        <div id="dist" class="text-lg font-medium tracking-wide text-gray-400 dark:text-gray-500">— cm</div>
+        <div id="last-seen" class="hidden text-xs text-gray-400 dark:text-gray-500 tracking-wider"></div>
+
+        <div id="prox-bars" class="flex items-end justify-center gap-2 h-9 w-full max-w-xs">
+          <div class="prox-seg flex-1 rounded-sm" style="height:22%"></div>
+          <div class="prox-seg flex-1 rounded-sm" style="height:40%"></div>
+          <div class="prox-seg flex-1 rounded-sm" style="height:60%"></div>
+          <div class="prox-seg flex-1 rounded-sm" style="height:80%"></div>
+          <div class="prox-seg flex-1 rounded-sm" style="height:100%"></div>
+        </div>
+
+        <div id="badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 text-xs tracking-widest uppercase">
+          <span id="badge-dot" class="w-1.5 h-1.5 rounded-full bg-current shrink-0"></span>
+          <span id="badge-label">SLEEPING</span>
+        </div>
+      </div>
+
+      <!-- Stats card -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="divide-y divide-gray-100 dark:divide-gray-800">
+          <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Level</span>
+            <span id="td-level" class="text-sm font-mono font-semibold">—</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Distance</span>
+            <span id="td-dist" class="text-sm font-mono">—</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Raw</span>
+            <span id="td-raw" class="text-sm font-mono">—</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Uptime</span>
+            <span id="td-uptime" class="text-sm font-mono tabular-nums">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug card -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <button id="dbg-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+          <span>Debug</span>
+          <svg id="dbg-chev" class="w-4 h-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+        </button>
+        <div id="dbg-body" class="hidden border-t border-gray-100 dark:border-gray-800">
+          <div class="grid grid-cols-2 gap-4 px-4 py-4 border-b border-gray-100 dark:border-gray-800">
+            <div>
+              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Sensor</p>
+              <span id="dbg-sensor" class="text-sm font-mono">—</span>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">RSSI</p>
+              <span id="dbg-rssi" class="text-sm font-mono">—</span>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Free Heap</p>
+              <span id="dbg-heap" class="text-sm font-mono">—</span>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Signal</p>
+              <div id="dbg-bars" class="flex items-end gap-1 h-4">
+                <div class="rssi-bar w-1.5 rounded-sm" style="height:25%"></div>
+                <div class="rssi-bar w-1.5 rounded-sm" style="height:50%"></div>
+                <div class="rssi-bar w-1.5 rounded-sm" style="height:75%"></div>
+                <div class="rssi-bar w-1.5 rounded-sm" style="height:100%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            <div class="flex items-center justify-between px-4 py-2.5">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Hostname</span>
+              <span id="dbg-hostname" class="text-sm font-mono">—</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">IP</span>
+              <span id="dbg-ip" class="text-sm font-mono">—</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">SSID</span>
+              <span id="dbg-ssid" class="text-sm">—</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-2.5">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Reset</span>
+              <span id="dbg-reset" class="text-sm">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings card -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <button id="cfg-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+          <span>Settings</span>
+          <svg id="cfg-chev" class="w-4 h-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+        </button>
+        <div id="cfg-body" class="hidden border-t border-gray-100 dark:border-gray-800">
+          <div class="px-4 py-4 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <label for="s-brightness" class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0">Brightness</label>
+              <input type="range" id="s-brightness" min="0" max="15" step="1" value="8" />
+              <span class="text-sm font-mono w-14 text-right shrink-0" id="v-brightness">8</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="s-sleep" class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0">Sleep after</label>
+              <input type="range" id="s-sleep" min="10" max="300" step="5" value="60" />
+              <span class="text-sm font-mono w-14 text-right shrink-0" id="v-sleep">60 s</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="s-activate" class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0">Activate at</label>
+              <input type="range" id="s-activate" min="100" max="500" step="10" value="300" />
+              <span class="text-sm font-mono w-14 text-right shrink-0" id="v-activate">300 cm</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <label for="s-offset" class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider w-24 shrink-0">Calibration</label>
+              <input type="range" id="s-offset" min="-50" max="50" step="1" value="0" />
+              <span class="text-sm font-mono w-14 text-right shrink-0" id="v-offset">0 cm</span>
+            </div>
+            <div class="flex items-center gap-3 pt-1">
+              <button onclick="saveSettings()" class="px-4 py-1.5 rounded-lg border border-green-500 text-green-600 dark:text-green-400 text-xs font-medium uppercase tracking-wider hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">Save</button>
+              <button onclick="resetSettings()" class="px-4 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Defaults</button>
+              <span id="save-msg" class="text-xs font-mono"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="py-3 text-center border-t border-gray-200 dark:border-gray-800">
+    <span id="version" class="text-xs text-gray-400 dark:text-gray-500"></span>
+  </footer>
+
+  <script>
+    // ── Theme ──────────────────────────────────────────────────────────────────
+    const html       = document.documentElement;
+    const themeBtn   = document.getElementById('themeBtn');
+    const themeColor = document.getElementById('themeColor');
+
+    function applyTheme(dark) {
+      html.classList.toggle('dark', dark);
+      themeBtn.innerHTML = dark
+        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06L5.404 4.343a.75.75 0 0 0-1.06 1.06l1.06 1.061Z"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z" clip-rule="evenodd"/></svg>';
+      themeColor.content = dark ? '#030712' : '#f9fafb';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    applyTheme(html.classList.contains('dark'));
+    themeBtn.addEventListener('click', () => applyTheme(!html.classList.contains('dark')));
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const $heroCard  = document.getElementById('hero-card');
+    const $big       = document.getElementById('big');
+    const $dist      = document.getElementById('dist');
+    const $lastSeen  = document.getElementById('last-seen');
+    const $badge     = document.getElementById('badge');
+    const $badgeLbl  = document.getElementById('badge-label');
+    const $badgeDot  = document.getElementById('badge-dot');
+    const $proxSegs  = document.getElementById('prox-bars').querySelectorAll('.prox-seg');
+    const $tdLevel   = document.getElementById('td-level');
+    const $tdDist    = document.getElementById('td-dist');
+    const $tdRaw     = document.getElementById('td-raw');
+    const $tdUptime  = document.getElementById('td-uptime');
+    const $dbgSensor = document.getElementById('dbg-sensor');
+    const $dbgRssi   = document.getElementById('dbg-rssi');
+    const $dbgHeap   = document.getElementById('dbg-heap');
+    const $dbgBars   = document.getElementById('dbg-bars').querySelectorAll('.rssi-bar');
+    const $dbgHost   = document.getElementById('dbg-hostname');
+    const $dbgIp     = document.getElementById('dbg-ip');
+    const $dbgSsid   = document.getElementById('dbg-ssid');
+    const $dbgReset  = document.getElementById('dbg-reset');
+    const $navTitle  = document.getElementById('navTitle');
+    const $saveMsg   = document.getElementById('save-msg');
+    const $wsBar     = document.getElementById('ws-bar');
+    const $version   = document.getElementById('version');
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function fmt(s) {
+      const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+      return `${pad(h)}:${pad(m)}:${pad(sec)}`;
+    }
+    function rssiToBars(rssi) {
+      if (rssi >= -60) return 4; if (rssi >= -70) return 3;
+      if (rssi >= -80) return 2; if (rssi >= -90) return 1;
+      return 0;
+    }
+    function updateRssiBars(rssi) {
+      const n = rssiToBars(rssi), poor = rssi < -70;
+      $dbgBars.forEach((b, i) => {
+        b.style.backgroundColor = i < n
+          ? (poor ? '#facc15' : '#22c55e')
+          : 'var(--rssi-off)';
+      });
+    }
+
+    // ── Sliders ────────────────────────────────────────────────────────────────
+    const sliders = [
+      { id: 's-brightness', valId: 'v-brightness', fmt: v => v },
+      { id: 's-sleep',      valId: 'v-sleep',      fmt: v => v + ' s' },
+      { id: 's-activate',   valId: 'v-activate',   fmt: v => v + ' cm' },
+      { id: 's-offset',     valId: 'v-offset',     fmt: v => (v > 0 ? '+' : '') + v + ' cm' },
+    ];
+    let settingsDirty = false;
+    sliders.forEach(({ id, valId, fmt: f }) => {
+      const el = document.getElementById(id), val = document.getElementById(valId);
+      el.addEventListener('input', () => { settingsDirty = true; val.textContent = f(el.value); });
+    });
+
+    function applyCfg(cfg) {
+      if (!cfg) return;
+      const set = (id, valId, v, f) => {
+        document.getElementById(id).value = v;
+        document.getElementById(valId).textContent = f(v);
+      };
+      set('s-brightness', 'v-brightness', cfg.brightness,    v => v);
+      set('s-sleep',      'v-sleep',      cfg.sleep_timeout, v => v + ' s');
+      set('s-activate',   'v-activate',   cfg.activate_dist, v => v + ' cm');
+      set('s-offset',     'v-offset',     cfg.offset,        v => (v > 0 ? '+' : '') + v + ' cm');
+    }
+
+    // ── Badge class sets ───────────────────────────────────────────────────────
+    const BADGE = {
+      ACTIVE:   'inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-green-400/40 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-xs tracking-widest uppercase',
+      IDLE:     'inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-orange-400/40 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 text-xs tracking-widest uppercase',
+      SLEEPING: 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 text-xs tracking-widest uppercase',
+    };
+
+    // ── Main update ────────────────────────────────────────────────────────────
+    function update(d) {
+      const state  = (d.state || 'SLEEPING').toUpperCase();
+      const level  = d.level  || '---';
+      const lnum   = typeof d.level_num === 'number' ? d.level_num : 6;
+      const dist   = d.distance >= 0 ? d.distance : null;
+      const raw    = d.raw      >= 0 ? d.raw      : null;
+      const parked = level === 'PARKED';
+
+      $heroCard.dataset.state = (state === 'ACTIVE' && parked) ? 'parked' : state.toLowerCase();
+      $badge.className = BADGE[state] || BADGE.SLEEPING;
+      $badgeLbl.textContent = state;
+      if (state === 'ACTIVE') $badgeDot.classList.add('live-dot');
+      else                    $badgeDot.classList.remove('live-dot');
+
+      if (state === 'SLEEPING' || state === 'IDLE') {
+        $big.className = 'font-black leading-none tracking-tighter text-gray-300 dark:text-gray-700';
+        $big.textContent = '—';
+        $dist.className  = 'text-lg font-medium tracking-wide text-gray-400 dark:text-gray-500';
+        $dist.textContent = '— cm';
+        if (d.last_seen >= 0) {
+          $lastSeen.textContent = 'last seen at ' + d.last_seen + ' cm';
+          $lastSeen.classList.remove('hidden');
+        } else {
+          $lastSeen.classList.add('hidden');
+        }
+      } else {
+        $lastSeen.classList.add('hidden');
+        $big.className  = 'font-black leading-none tracking-tighter ' + (parked ? 'text-sky-400' : 'text-green-500');
+        $big.textContent = parked ? 'P' : (level === '---' ? '—' : level);
+        $dist.className  = 'text-lg font-medium tracking-wide text-gray-700 dark:text-gray-200';
+        $dist.textContent = dist !== null ? dist + ' cm' : '— cm';
+      }
+
+      const fill = state === 'ACTIVE' ? Math.min(5, lnum < 6 ? 6 - lnum : 0) : 0;
+      const onColor = parked ? '#38bdf8' : '#22c55e';
+      $proxSegs.forEach((seg, i) => {
+        seg.style.backgroundColor = i < fill ? onColor : 'var(--bar-off)';
+      });
+
+      $tdLevel.textContent  = level;
+      $tdDist.textContent   = dist !== null ? dist + ' cm' : '—';
+      $tdRaw.textContent    = raw  !== null ? raw  + ' cm' : '—';
+      $tdUptime.textContent = typeof d.uptime === 'number' ? fmt(d.uptime) : '—';
+
+      if (typeof d.sensor_ok === 'boolean') {
+        $dbgSensor.textContent = d.sensor_ok ? 'OK' : 'TIMEOUT';
+        $dbgSensor.className   = 'text-sm font-mono ' + (d.sensor_ok
+          ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400');
+      }
+      if (typeof d.rssi === 'number' && d.rssi !== 0) {
+        $dbgRssi.textContent = d.rssi + ' dBm';
+        $dbgRssi.className   = 'text-sm font-mono ' + (d.rssi >= -70
+          ? 'text-green-600 dark:text-green-400'
+          : d.rssi >= -80 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500 dark:text-red-400');
+        updateRssiBars(d.rssi);
+      }
+      if (typeof d.heap === 'number') {
+        $dbgHeap.textContent = (d.heap / 1024).toFixed(1) + ' KB';
+        $dbgHeap.className   = 'text-sm font-mono ' + (d.heap > 50000
+          ? 'text-green-600 dark:text-green-400'
+          : d.heap > 20000 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500 dark:text-red-400');
+      }
+      if (d.description != null) $navTitle.textContent = d.description || 'mpark';
+      if (d.hostname)     $dbgHost.textContent  = d.hostname;
+      if (d.ip)           $dbgIp.textContent    = d.ip;
+      if (d.ssid)         $dbgSsid.textContent  = d.ssid;
+      if (d.reset_reason) $dbgReset.textContent = d.reset_reason;
+      if (d.version && !$version.textContent.includes(d.version)) {
+        const a = document.createElement('a');
+        a.href = '/update.html';
+        a.className = 'hover:text-gray-700 dark:hover:text-gray-300 transition-colors';
+        a.textContent = d.version;
+        $version.replaceChildren(a);
+      }
+      if (!settingsDirty) applyCfg(d.cfg);
+    }
+
+    // ── Settings ───────────────────────────────────────────────────────────────
+    let ws;
+    function showMsg(text, cls) {
+      $saveMsg.textContent = text;
+      $saveMsg.className   = 'text-xs font-mono ' + cls;
+      setTimeout(() => { $saveMsg.textContent = ''; }, 2500);
+    }
+    function saveSettings() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) { showMsg('✗ offline', 'text-red-500'); return; }
+      ws.send(JSON.stringify({
+        type:          'settings',
+        brightness:    parseInt(document.getElementById('s-brightness').value),
+        sleep_timeout: parseInt(document.getElementById('s-sleep').value),
+        activate_dist: parseFloat(document.getElementById('s-activate').value),
+        offset:        parseFloat(document.getElementById('s-offset').value),
+      }));
+      settingsDirty = false; showMsg('✓ saved', 'text-green-600 dark:text-green-400');
+    }
+    function resetSettings() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) { showMsg('✗ offline', 'text-red-500'); return; }
+      ws.send(JSON.stringify({ type: 'settings', brightness: 8, sleep_timeout: 60, activate_dist: 300, offset: 0 }));
+      settingsDirty = false; showMsg('✓ reset', 'text-green-600 dark:text-green-400');
+    }
+
+    // ── Collapsibles ───────────────────────────────────────────────────────────
+    function makeToggle(btnId, bodyId, chevId) {
+      document.getElementById(btnId).addEventListener('click', () => {
+        const nowHidden = document.getElementById(bodyId).classList.toggle('hidden');
+        document.getElementById(chevId).style.transform = nowHidden ? '' : 'rotate(180deg)';
+      });
+    }
+    makeToggle('dbg-toggle', 'dbg-body', 'dbg-chev');
+    makeToggle('cfg-toggle', 'cfg-body', 'cfg-chev');
+
+    // ── ws-bar ─────────────────────────────────────────────────────────────────
+    function setWsBar(state) {
+      $wsBar.className = 'h-1 transition-colors duration-300 ' + (
+        state === 'connected'    ? 'bg-green-500' :
+        state === 'disconnected' ? 'bg-red-500'   : 'bg-gray-400');
+    }
+    setWsBar('connecting');
+
+    // ── WebSocket ──────────────────────────────────────────────────────────────
+    let retryMs = 1000;
+    function connect() {
+      ws = new WebSocket(`ws://${location.host}/ws`);
+      ws.addEventListener('open',    () => { setWsBar('connected'); retryMs = 1000; });
+      ws.addEventListener('message', e  => { try { update(JSON.parse(e.data)); } catch(_) {} });
+      ws.addEventListener('close',   () => { setWsBar('disconnected'); setTimeout(connect, retryMs); retryMs = Math.min(retryMs * 2, 16000); });
+      ws.addEventListener('error',   () => ws.close());
+    }
+    connect();
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && (!ws || ws.readyState === WebSocket.CLOSED)) { retryMs = 1000; connect(); }
+    });
+  </script>
+</body>
+</html>

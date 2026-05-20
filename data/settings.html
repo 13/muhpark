@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" id="themeColor" content="#f9fafb" />
+  <title>mpark — Settings</title>
+  <link rel="icon" href="favicon.ico" />
+  <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
+  <script src="js/tailwind.js"></script>
+  <style type="text/tailwindcss">
+    @variant dark (&:where(.dark, .dark *));
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col">
+
+  <div class="h-1 bg-transparent"></div>
+
+  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+    <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <img src="/img/mpark.png" alt="" class="w-7 h-7" />
+        <span id="navTitle" class="font-semibold text-sm text-gray-800 dark:text-gray-100">mpark</span>
+      </a>
+      <div class="flex items-center gap-4">
+        <a href="/" title="Dashboard" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd"/></svg>
+        </a>
+        <a href="/update.html" title="Firmware" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M9.25 13.25a.75.75 0 0 0 1.5 0V4.636l2.955 3.129a.75.75 0 0 0 1.09-1.03l-4.25-4.5a.75.75 0 0 0-1.09 0l-4.25 4.5a.75.75 0 1 0 1.09 1.03L9.25 4.636v8.614Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+        </a>
+        <a href="/settings.html" title="Settings" class="text-gray-800 dark:text-gray-100 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
+        </a>
+        <button id="themeBtn" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 py-4">
+    <div class="max-w-2xl mx-auto px-4 flex flex-col gap-4">
+
+      <!-- Device section -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Device</span>
+        </div>
+        <div class="p-4 flex flex-col gap-3">
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Description</span>
+            <input id="description" type="text" maxlength="63" placeholder="e.g. Garage Sensor"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+          </label>
+        </div>
+      </div>
+
+      <!-- WiFi section -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">WiFi</span>
+        </div>
+        <div class="p-4 flex flex-col gap-3">
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">SSID</span>
+            <input id="wifi_ssid" type="text" maxlength="63" placeholder="Network name"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Password</span>
+            <div class="relative">
+              <input id="wifi_pass" type="password" maxlength="63" placeholder="leave blank to keep current"
+                     class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+              <button type="button" data-toggle="wifi_pass"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600
+                             dark:hover:text-gray-200 px-1 py-1 min-h-[36px]">Show</button>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- MQTT section -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">MQTT</span>
+        </div>
+        <div class="p-4 flex flex-col gap-3">
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Base topic</span>
+            <input id="mqtt_base" type="text" maxlength="63" placeholder="muh/esp"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+            <span class="text-xs text-gray-400 dark:text-gray-500">Publishes {base}/esp32-XXXX = online/offline · /IP · /VERSION</span>
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Data topic</span>
+            <input id="mqtt_topic" type="text" maxlength="63" placeholder="muh/parking/park-XXXX"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Server</span>
+            <input id="mqtt_server" type="text" maxlength="63" placeholder="192.168.1.1"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Port</span>
+            <input id="mqtt_port" type="number" min="1" max="65535" placeholder="1883"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Username</span>
+            <input id="mqtt_user" type="text" maxlength="31" placeholder="optional"
+                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Password</span>
+            <div class="relative">
+              <input id="mqtt_pass" type="password" maxlength="63" placeholder="leave blank to keep current"
+                     class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+              <button type="button" data-toggle="mqtt_pass"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600
+                             dark:hover:text-gray-200 px-1 py-1 min-h-[36px]">Show</button>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button id="saveBtn"
+              class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700
+                     text-white py-3 px-4 rounded-xl transition-colors font-medium text-sm min-h-[44px]">
+        Save &amp; Reboot
+      </button>
+
+      <p id="statusMsg" class="text-center text-sm min-h-[1.25rem]"></p>
+
+    </div>
+  </main>
+
+  <footer class="py-3 text-center border-t border-gray-200 dark:border-gray-800">
+    <span id="version" class="text-xs text-gray-400 dark:text-gray-500"></span>
+  </footer>
+
+  <!-- Reboot modal -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-center w-full max-w-sm">
+      <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p id="modalStep" class="font-semibold text-gray-900 dark:text-white text-base"></p>
+      <p id="modalMsg"  class="text-gray-500 dark:text-gray-400 text-sm mt-1"></p>
+    </div>
+  </div>
+
+  <script>
+    // ── Theme ──────────────────────────────────────────────────────────────────
+    const html       = document.documentElement;
+    const themeBtn   = document.getElementById('themeBtn');
+    const themeColor = document.getElementById('themeColor');
+
+    function applyTheme(dark) {
+      html.classList.toggle('dark', dark);
+      themeBtn.innerHTML = dark
+        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06L5.404 4.343a.75.75 0 0 0-1.06 1.06l1.06 1.061Z"/></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z" clip-rule="evenodd"/></svg>';
+      themeColor.content = dark ? '#030712' : '#f9fafb';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    applyTheme(html.classList.contains('dark'));
+    themeBtn.addEventListener('click', () => applyTheme(!html.classList.contains('dark')));
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const saveBtn   = document.getElementById('saveBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const elModal   = document.getElementById('modal');
+    const elStep    = document.getElementById('modalStep');
+    const elMsg     = document.getElementById('modalMsg');
+    const elVersion = document.getElementById('version');
+    const navTitle  = document.getElementById('navTitle');
+
+    const FIELDS = ['description', 'wifi_ssid', 'wifi_pass', 'mqtt_base', 'mqtt_topic', 'mqtt_server', 'mqtt_port', 'mqtt_user', 'mqtt_pass'];
+
+    // ── Password show/hide ─────────────────────────────────────────────────────
+    document.querySelectorAll('[data-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const inp  = document.getElementById(btn.dataset.toggle);
+        const show = inp.type === 'password';
+        inp.type        = show ? 'text' : 'password';
+        btn.textContent = show ? 'Hide' : 'Show';
+      });
+    });
+
+    // ── Load current config ────────────────────────────────────────────────────
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(d => {
+        navTitle.textContent = d.description || 'mpark';
+        for (const id of FIELDS) {
+          const el = document.getElementById(id);
+          if (!el || el.type === 'password') continue;
+          if (d[id] != null) el.value = d[id];
+        }
+        if (d.version) {
+          const a = document.createElement('a');
+          a.href = '/update.html';
+          a.className = 'hover:text-gray-700 dark:hover:text-gray-300 transition-colors';
+          a.textContent = d.version;
+          elVersion.replaceChildren(a);
+        }
+      })
+      .catch(() => {
+        statusMsg.textContent = 'Could not load current settings.';
+        statusMsg.className   = 'text-center text-sm text-red-600 dark:text-red-400';
+      });
+
+    // ── Modal helpers ──────────────────────────────────────────────────────────
+    function showModal(step, msg = '') {
+      elStep.textContent = step;
+      elMsg.textContent  = msg;
+      elModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function hideModal() {
+      elModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function waitForReboot() {
+      let tries = 0;
+      (function check() {
+        fetch('/ping')
+          .then(r => {
+            if (r.ok) { hideModal(); setTimeout(() => location.href = '/', 1000); }
+            else if (++tries < 60) setTimeout(check, 2000);
+            else hideModal();
+          })
+          .catch(() => { if (++tries < 60) setTimeout(check, 2000); else hideModal(); });
+      })();
+    }
+
+    // ── Save ───────────────────────────────────────────────────────────────────
+    saveBtn.addEventListener('click', async () => {
+      statusMsg.textContent = '';
+      statusMsg.className   = 'text-center text-sm';
+
+      const body = {};
+      for (const id of FIELDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const v = el.value.trim();
+        if (el.type === 'password' && !v) continue;
+        body[id] = el.type === 'number' ? Number(v) : v;
+      }
+
+      showModal('Saving…', 'Writing configuration to device.');
+      try {
+        const d = await fetch('/api/settings', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(body),
+        }).then(r => r.json());
+
+        if (!d.ok) throw new Error(d.err ?? 'Save failed');
+
+        elStep.textContent = 'Rebooting…';
+        elMsg.textContent  = 'Waiting for device to come back online.';
+        await fetch('/api/reboot', { method: 'POST' }).catch(() => {});
+        setTimeout(waitForReboot, 3000);
+
+      } catch (err) {
+        hideModal();
+        statusMsg.textContent = err.message;
+        statusMsg.className   = 'text-center text-sm text-red-600 dark:text-red-400';
+      }
+    });
+  </script>
+</body>
+</html>
