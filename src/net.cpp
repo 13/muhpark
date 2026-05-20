@@ -22,9 +22,9 @@ void Net::begin() {
     if (WiFi.status() == WL_CONNECTED) {
         Serial.printf("\n[wifi] http://%s\n", WiFi.localIP().toString().c_str());
     } else {
-        Serial.println("\n[wifi] fallback AP: mpark-ap (192.168.4.1)");
+        Serial.println("\n[wifi] fallback AP: muhpark-ap (192.168.4.1)");
         WiFi.mode(WIFI_AP);
-        WiFi.softAP("mpark-ap");
+        WiFi.softAP("muhpark-ap");
     }
 
     ArduinoOTA.setHostname(hostname);

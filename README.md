@@ -1,4 +1,4 @@
-# mpark
+# muhpark
 
 Smart parking sensor — ESP32-S2 Mini + VL53L1X + MAX7219 8×8 LED matrix.
 
@@ -47,7 +47,7 @@ build_flags =
     -DWIFI_PASSWORD=\"MyPassword\"
 ```
 
-If WiFi fails the device starts an AP named **mpark-ap** (no password).
+If WiFi fails the device starts an AP named **muhpark-ap** (no password).
 Connect and browse to `192.168.4.1`.
 
 ## Build & Flash

@@ -66,7 +66,7 @@ static void broadcast(const ParkState& s) {
     doc["description"]  = cfg.description;
     doc["hostname"]     = WiFi.getHostname();
     doc["reset_reason"] = resetReasonStr();
-    doc["ssid"]         = (WiFi.getMode() == WIFI_STA) ? WiFi.SSID() : String("mpark-ap");
+    doc["ssid"]         = (WiFi.getMode() == WIFI_STA) ? WiFi.SSID() : String("muhpark-ap");
     doc["ip"]           = (WiFi.getMode() == WIFI_STA)
                             ? WiFi.localIP().toString()
                             : WiFi.softAPIP().toString();

@@ -4,10 +4,10 @@ sys.path.insert(0, env["PROJECT_DIR"])
 
 try:
     import pio_secrets
-    _host = getattr(pio_secrets, 'OTA_HOST', 'mpark.local')
+    _host = getattr(pio_secrets, 'OTA_HOST', 'muhpark.local')
     _auth = getattr(pio_secrets, 'OTA_PASS', None)
 except ImportError:
-    _host = 'mpark.local'
+    _host = 'muhpark.local'
     _auth = None
 
 # Set port early (used as $UPLOAD_PORT in the platform's command template)

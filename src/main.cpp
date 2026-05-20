@@ -1,5 +1,5 @@
 /*
- * mpark — Smart Parking Sensor v1.1
+ * muhpark — Smart Parking Sensor v1.1
  * Hardware: ESP32-S2 Mini + VL53L1X + MAX7219 8×8 LED matrix
  *
  * Pin map (ESP32-S2 Mini):
@@ -28,7 +28,7 @@ void setup() {
 #endif
     Serial.begin(115200);
     while (!Serial && millis() < 5000) delay(10);
-    Serial.printf("\n── mpark %s ──\n", VERSION);
+    Serial.printf("\n── muhpark %s ──\n", VERSION);
 
     if (!LittleFS.begin()) Serial.println("[fs] mount failed");
     else                   Serial.println("[fs] mounted");
@@ -40,7 +40,7 @@ void setup() {
     Web::begin(state);
     Mqtt::begin();
 
-    Serial.println("[mpark] ready");
+    Serial.println("[muhpark] ready");
 }
 
 void loop() {

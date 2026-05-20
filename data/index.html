@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" id="themeColor" content="#f9fafb" />
-  <title>mpark</title>
+  <title>muhpark</title>
   <link rel="icon" href="favicon.ico" />
   <script>if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');</script>
   <script src="js/tailwind.js"></script>
@@ -35,8 +35,8 @@
   <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
     <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
-        <img src="/img/mpark.png" alt="" class="w-7 h-7" />
-        <span id="navTitle" class="font-semibold text-sm text-gray-800 dark:text-gray-100">mpark</span>
+        <img src="/img/muhpark.png" alt="" class="w-7 h-7" />
+        <span id="navTitle" class="font-semibold text-sm text-gray-800 dark:text-gray-100">muhpark</span>
       </a>
       <div class="flex items-center gap-4">
         <a href="/" title="Dashboard" class="text-gray-800 dark:text-gray-100 flex items-center">
@@ -364,7 +364,7 @@
           ? 'text-green-600 dark:text-green-400'
           : d.heap > 20000 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500 dark:text-red-400');
       }
-      if (d.description != null) $navTitle.textContent = d.description || 'mpark';
+      if (d.description != null) $navTitle.textContent = d.description || 'muhpark';
       if (d.hostname)     $dbgHost.textContent  = d.hostname;
       if (d.ip)           $dbgIp.textContent    = d.ip;
       if (d.ssid)         $dbgSsid.textContent  = d.ssid;
