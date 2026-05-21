@@ -14,20 +14,27 @@ Smart parking sensor — ESP32-S2 Mini + VL53L1X + MAX7219 8×8 LED matrix.
 | Sensor | VL53L1X time-of-flight (I2C) |
 | Display | 8×8 LED matrix, MAX7219 driver |
 
+## Variants
+
+Two sensor configurations are supported, selected at build time.
+
+### Variant A — single side-mounted sensor (default)
+
+One VL53L1X mounted at the side of the parking spot, measuring approach distance. Shows levels 1–5 as the car approaches, and a smiley when parked (≤ 25 cm).
+
+Build environment: `lolin_s2_mini`
+
+### Variant B — dual ceiling-mounted sensors
+
+Two VL53L1X sensors mounted on the ceiling pointing downward. When **both** sensors detect the car (reading below the configured threshold), the car is confirmed in place and a smiley is shown. No approach levels — purely binary presence detection.
+
+Build environment: `ceiling_dual`
+
+---
+
 ## Wiring
 
-### VL53L1X
-
-```
-VL53L1X VIN  →  ESP32 3.3 V
-VL53L1X GND  →  ESP32 GND
-VL53L1X SDA  →  GPIO 33
-VL53L1X SCL  →  GPIO 35
-```
-
-No voltage divider needed — the sensor runs at 3.3 V natively.
-
-### MAX7219
+### MAX7219 (both variants)
 
 ```
 MAX7219 VCC  →  ESP32 5V
@@ -41,9 +48,42 @@ MAX7219 CS   →  GPIO 5
 > usually works; for guaranteed reliability add a 74AHCT125 level shifter on
 > DIN and CLK.
 
+### Variant A — single VL53L1X
+
+```
+VL53L1X VIN  →  ESP32 3.3 V
+VL53L1X GND  →  ESP32 GND
+VL53L1X SDA  →  GPIO 33
+VL53L1X SCL  →  GPIO 35
+```
+
+No voltage divider needed — the sensor runs at 3.3 V natively.
+
+### Variant B — dual VL53L1X
+
+Both sensors share the I2C bus. One XSHUT pin is required to sequence address assignment on boot.
+
+```
+Sensor A VIN    →  ESP32 3.3 V       (address reassigned to 0x30)
+Sensor A GND    →  ESP32 GND
+Sensor A SDA    →  GPIO 33
+Sensor A SCL    →  GPIO 35
+Sensor A XSHUT  →  (no connection)
+
+Sensor B VIN    →  ESP32 3.3 V       (keeps default address 0x29)
+Sensor B GND    →  ESP32 GND
+Sensor B SDA    →  GPIO 33
+Sensor B SCL    →  GPIO 35
+Sensor B XSHUT  →  GPIO 34
+```
+
+`PIN_XSHUT_B` is defined in `sensor.cpp` and can be changed to any free GPIO.
+
+---
+
 ## Configuration
 
-Edit `platformio.ini` and set your credentials in `build_flags`:
+Credentials live in `pio_secrets.py` (gitignored). Copy `pio_secrets.py.example` if present, or set them as build flags directly:
 
 ```ini
 build_flags =
@@ -54,26 +94,37 @@ build_flags =
 If WiFi fails the device starts an AP named **muhpark-ap** (no password).
 Connect and browse to `192.168.4.1`.
 
+---
+
 ## Build & Flash
 
 ```bash
 # Install PlatformIO CLI (skip if already installed)
 pip install platformio
 
-# Flash firmware
-pio run -t upload
+# Variant A (default)
+pio run -e lolin_s2_mini -t upload
+pio run -e lolin_s2_mini -t uploadfs   # first flash only
 
-# Flash web UI (LittleFS image)
-pio run -t uploadfs
+# Variant B (dual ceiling)
+pio run -e ceiling_dual -t upload
+pio run -e ceiling_dual -t uploadfs    # first flash only
+
+# OTA
+pio run -e ota -t upload               # Variant A over-the-air
+pio run -e ceiling_dual_ota -t upload  # Variant B over-the-air
 
 # Monitor serial
 pio device monitor
 ```
 
-Both `upload` and `uploadfs` are required on first flash. After that, OTA
-updates (`ArduinoOTA`) can replace the firmware without USB.
+Both `upload` and `uploadfs` are required on first flash. After that OTA can replace the firmware without USB.
+
+---
 
 ## Display Logic
+
+### Variant A
 
 | Distance | Level shown |
 |---|---|
@@ -87,18 +138,31 @@ updates (`ArduinoOTA`) can replace the firmware without USB.
 
 Each boundary has ~10% hysteresis to prevent flickering.
 
+### Variant B
+
+| Condition | Shown |
+|---|---|
+| Both sensors detect car (< `activate_dist`) | smiley |
+| Either sensor sees open space | off |
+
+Set `activate_dist` in the web UI to a value between your ceiling height and the car roof height (e.g. ceiling 220 cm, car 140 cm → use ~180 cm).
+
+---
+
 ## State Machine
 
 ```
-             object detected (≤ 300 cm)
-  SLEEPING ─────────────────────────────► ACTIVE
-     ▲                                      │  ▲
-     │  60 s timeout                        │  │ object in range
-     │                                      ▼  │
-   IDLE ◄─────────────────────────────── object leaves (> 330 cm)
+             object detected
+  SLEEPING ────────────────► ACTIVE
+     ▲                         │  ▲
+     │  60 s timeout           │  │ object in range
+     │                         ▼  │
+   IDLE ◄──────────────────── object leaves
 ```
 
 LED matrix is on only during **ACTIVE**. Both IDLE and SLEEPING keep it off.
+
+---
 
 ## Web Interface
 
@@ -111,27 +175,41 @@ Open `http://<device-ip>` in any browser.
 
 REST fallback: `GET /api/status` returns JSON (useful for scripting).
 
+---
+
 ## Architecture
 
 ```
 loop()
-  every 100 ms (sensor dataReady):
-    readRaw()            — VL53L1X single ToF measurement (mm → cm)
-    medianFilter()       — 7-sample sliding window
-    updateLevel()        — hysteresis state machine (levels 0–6)
-    updateStateMachine() — SLEEPING / IDLE / ACTIVE + LED output
+  every ~100 ms (sensor dataReady):
+    Sensor::update()       — read, filter, level/presence calc, state machine
+    Display::update()      — show level pattern or smiley on MAX7219
+    Web::notify()          — push JSON over WebSocket
 
   every 200 ms:
-    broadcastStatus()    — JSON over WebSocket to all clients
+    Web::loop()            — WebSocket broadcast
+    Mqtt::loop()           — MQTT reconnect / publish on change
 ```
+
+---
 
 ## Adjusting Parameters
 
-All key constants are at the top of `src/sensor.cpp`:
+Key constants in `src/sensor.cpp`:
 
 | Constant | Default | Purpose |
 |---|---|---|
-| `INNER_CLOSER[]` | see code | per-level activation thresholds (cm) |
-| `INNER_FARTHER[]` | see code | per-level deactivation thresholds (cm) |
-| `LEVEL_DEBOUNCE` | 5 | readings before a level change is committed |
-| `FILTER_SIZE` | 7 | median filter window |
+| `LEVEL_DEBOUNCE` | 5 | readings before a level change commits |
+| `FILTER_SIZE` | 7 | median filter window (Variant A only) |
+| `INNER_CLOSER[]` | see code | per-level activation thresholds, cm (Variant A only) |
+| `INNER_FARTHER[]` | see code | per-level deactivation thresholds, cm (Variant A only) |
+| `PIN_XSHUT_B` | GPIO 34 | XSHUT pin for sensor B (Variant B only) |
+
+Runtime settings (web UI / `config.json`):
+
+| Setting | Purpose |
+|---|---|
+| `activate_dist` | Approach trigger distance (Variant A) / ceiling presence threshold (Variant B) |
+| `offset` | Distance calibration offset applied to all sensor readings |
+| `sleep_timeout` | Seconds before display sleeps after last level change |
+| `brightness` | LED matrix brightness (0–15) |
