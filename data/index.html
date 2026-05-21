@@ -17,22 +17,23 @@
     #hero-card[data-state="parked"]       { box-shadow: 0 0 60px rgba(56,189,248,.15), 0 4px 20px rgba(0,0,0,.08); }
     .dark #hero-card[data-state="active"] { box-shadow: 0 0 80px rgba(34,197,94,.09),  0 4px 32px rgba(0,0,0,.5); }
     .dark #hero-card[data-state="parked"] { box-shadow: 0 0 80px rgba(56,189,248,.11), 0 4px 32px rgba(0,0,0,.5); }
-    :root  { --bar-off: #e5e7eb; --rssi-off: #d1d5db; }
-    html.dark { --bar-off: #374151; --rssi-off: #4b5563; }
+    :root { --bar-off: #e5e7eb; }
+    html.dark { --bar-off: #374151; }
     input[type=range] { -webkit-appearance:none; appearance:none; flex:1; height:2px; border-radius:2px; outline:none; background:#e2e8f0; }
     .dark input[type=range] { background:#334155; }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:#22c55e; cursor:pointer; transition:transform .15s; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:#2563eb; cursor:pointer; transition:transform .15s; }
     input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.25); }
-    input[type=range]::-moz-range-thumb { width:15px; height:15px; border-radius:50%; background:#22c55e; cursor:pointer; border:none; }
+    input[type=range]::-moz-range-thumb { width:15px; height:15px; border-radius:50%; background:#2563eb; cursor:pointer; border:none; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
     .live-dot { animation: blink 2s ease-in-out infinite; }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col">
 
+  <div class="sticky top-0 z-10">
   <div id="ws-bar" class="h-1 transition-colors duration-300"></div>
 
-  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
         <img src="/img/muhpark.png" alt="" class="w-7 h-7" />
@@ -55,6 +56,7 @@
       </div>
     </div>
   </nav>
+  </div>
 
   <!-- Tailwind safelist -->
   <div class="hidden
@@ -62,7 +64,7 @@
     border-green-400/40 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400
     border-orange-400/40 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400
     text-yellow-600 dark:text-yellow-400 text-red-500 dark:text-red-400
-    bg-green-500 bg-red-500 bg-gray-400
+    bg-green-500 bg-red-500 bg-gray-400 bg-yellow-500 bg-orange-400
     flex-col sm:flex-row sm:items-center gap-2 sm:gap-3
   "></div>
 
@@ -112,61 +114,6 @@
         </div>
       </div>
 
-      <!-- Debug card -->
-      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-        <button id="dbg-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
-          <span>Debug</span>
-          <svg id="dbg-chev" class="w-4 h-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
-        </button>
-        <div id="dbg-body" class="hidden border-t border-gray-100 dark:border-gray-800">
-          <div class="grid grid-cols-2 gap-4 px-4 py-4 border-b border-gray-100 dark:border-gray-800">
-            <div>
-              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Sensor</p>
-              <span id="dbg-sensor" class="text-sm font-mono">—</span>
-            </div>
-            <div>
-              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">RSSI</p>
-              <span id="dbg-rssi" class="text-sm font-mono">—</span>
-            </div>
-            <div>
-              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Free Heap</p>
-              <span id="dbg-heap" class="text-sm font-mono">—</span>
-            </div>
-            <div>
-              <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Signal</p>
-              <div id="dbg-bars" class="flex items-end gap-1 h-4">
-                <div class="rssi-bar w-1.5 rounded-sm" style="height:25%"></div>
-                <div class="rssi-bar w-1.5 rounded-sm" style="height:50%"></div>
-                <div class="rssi-bar w-1.5 rounded-sm" style="height:75%"></div>
-                <div class="rssi-bar w-1.5 rounded-sm" style="height:100%"></div>
-              </div>
-            </div>
-          </div>
-          <div class="divide-y divide-gray-100 dark:divide-gray-800">
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Hostname</span>
-              <span id="dbg-hostname" class="text-sm font-mono">—</span>
-            </div>
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">IP</span>
-              <span id="dbg-ip" class="text-sm font-mono">—</span>
-            </div>
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">SSID</span>
-              <span id="dbg-ssid" class="text-sm">—</span>
-            </div>
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Reset</span>
-              <span id="dbg-reset" class="text-sm">—</span>
-            </div>
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Display</span>
-              <span id="dbg-display" class="text-sm font-mono">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Settings card -->
       <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
         <button id="cfg-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
@@ -196,9 +143,45 @@
               <span class="text-sm font-mono w-14 shrink-0" id="v-offset">0 cm</span>
             </div>
             <div class="flex items-center gap-3 pt-1">
-              <button onclick="saveSettings()" class="px-4 py-1.5 rounded-lg border border-green-500 text-green-600 dark:text-green-400 text-xs font-medium uppercase tracking-wider hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">Save</button>
-              <button onclick="resetSettings()" class="px-4 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">Defaults</button>
+              <button onclick="saveSettings()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-sm font-medium transition-colors">Save</button>
+              <button onclick="resetSettings()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium transition-colors">Defaults</button>
               <span id="save-msg" class="text-xs font-mono"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug card -->
+      <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <button id="dbg-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+          <span>Debug</span>
+          <svg id="dbg-chev" class="w-4 h-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+        </button>
+        <div id="dbg-body" class="hidden border-t border-gray-100 dark:border-gray-800">
+          <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">SSID</span>
+              <span class="text-sm font-mono flex items-center gap-2">
+                <span id="dbg-ssid">—</span>
+                <span id="dbg-rssidot" class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 shrink-0"></span>
+                <span id="dbg-signal" class="text-xs text-gray-400 dark:text-gray-500"></span>
+              </span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Hostname</span>
+              <span id="dbg-hostname" class="text-sm font-mono">—</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">IP</span>
+              <span id="dbg-ip" class="text-sm font-mono">—</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Free Memory</span>
+              <span id="dbg-memory" class="text-sm font-mono">—</span>
+            </div>
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Reset</span>
+              <span id="dbg-reset" class="text-sm font-mono">—</span>
             </div>
           </div>
         </div>
@@ -241,15 +224,13 @@
     const $tdDist    = document.getElementById('td-dist');
     const $tdRaw     = document.getElementById('td-raw');
     const $tdUptime  = document.getElementById('td-uptime');
-    const $dbgSensor = document.getElementById('dbg-sensor');
-    const $dbgRssi   = document.getElementById('dbg-rssi');
-    const $dbgHeap   = document.getElementById('dbg-heap');
-    const $dbgBars   = document.getElementById('dbg-bars').querySelectorAll('.rssi-bar');
+    const $dbgRssidot = document.getElementById('dbg-rssidot');
+    const $dbgSsid   = document.getElementById('dbg-ssid');
+    const $dbgSignal = document.getElementById('dbg-signal');
     const $dbgHost   = document.getElementById('dbg-hostname');
     const $dbgIp     = document.getElementById('dbg-ip');
-    const $dbgSsid   = document.getElementById('dbg-ssid');
-    const $dbgReset   = document.getElementById('dbg-reset');
-    const $dbgDisplay = document.getElementById('dbg-display');
+    const $dbgMemory = document.getElementById('dbg-memory');
+    const $dbgReset  = document.getElementById('dbg-reset');
     const $navTitle  = document.getElementById('navTitle');
     const $saveMsg   = document.getElementById('save-msg');
     const $wsBar     = document.getElementById('ws-bar');
@@ -258,21 +239,14 @@
     // ── Helpers ────────────────────────────────────────────────────────────────
     function pad(n) { return String(n).padStart(2, '0'); }
     function fmt(s) {
-      const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
-      return `${pad(h)}:${pad(m)}:${pad(sec)}`;
+      const d = Math.floor(s / 86400);
+      const h = Math.floor(s % 86400 / 3600);
+      const m = Math.floor(s % 3600 / 60);
+      const sec = s % 60;
+      return d > 0 ? `${d}d ${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(h)}:${pad(m)}:${pad(sec)}`;
     }
-    function rssiToBars(rssi) {
-      if (rssi >= -60) return 4; if (rssi >= -70) return 3;
-      if (rssi >= -80) return 2; if (rssi >= -90) return 1;
-      return 0;
-    }
-    function updateRssiBars(rssi) {
-      const n = rssiToBars(rssi), poor = rssi < -70;
-      $dbgBars.forEach((b, i) => {
-        b.style.backgroundColor = i < n
-          ? (poor ? '#facc15' : '#22c55e')
-          : 'var(--rssi-off)';
-      });
+    function rssiToPercent(rssi) {
+      return Math.max(0, Math.min(100, 2 * (rssi + 100)));
     }
 
     // ── Sliders ────────────────────────────────────────────────────────────────
@@ -350,35 +324,33 @@
       $tdLevel.textContent  = level;
       $tdDist.textContent   = dist !== null ? dist + ' cm' : '—';
       $tdRaw.textContent    = raw  !== null ? raw  + ' cm' : '—';
-      $tdUptime.textContent = typeof d.uptime === 'number' ? fmt(d.uptime) : '—';
+      if (typeof d.uptime === 'number') {
+        $tdUptime.textContent = fmt(d.uptime);
+      }
 
-      if (typeof d.sensor_ok === 'boolean') {
-        $dbgSensor.textContent = d.sensor_ok ? 'OK' : 'TIMEOUT';
-        $dbgSensor.className   = 'text-sm font-mono ' + (d.sensor_ok
-          ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400');
-      }
+      if (d.ssid)           $dbgSsid.textContent = d.ssid;
       if (typeof d.rssi === 'number' && d.rssi !== 0) {
-        $dbgRssi.textContent = d.rssi + ' dBm';
-        $dbgRssi.className   = 'text-sm font-mono ' + (d.rssi >= -70
-          ? 'text-green-600 dark:text-green-400'
-          : d.rssi >= -80 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500 dark:text-red-400');
-        updateRssiBars(d.rssi);
+        const pct = rssiToPercent(d.rssi);
+        $dbgSignal.textContent = `${pct}%  ${d.rssi} dBm`;
+        const dot = d.rssi >= -60 ? 'bg-green-500' : d.rssi >= -70 ? 'bg-yellow-500' : d.rssi >= -80 ? 'bg-orange-400' : 'bg-red-500';
+        $dbgRssidot.className = `w-2 h-2 rounded-full shrink-0 ${dot}`;
       }
+      if (d.hostname)       $dbgHost.textContent  = d.hostname;
+      if (d.ip)             $dbgIp.textContent    = d.ip;
+      if (d.reset_reason)   $dbgReset.textContent = d.reset_reason;
       if (typeof d.heap === 'number') {
-        $dbgHeap.textContent = (d.heap / 1024).toFixed(1) + ' KB';
-        $dbgHeap.className   = 'text-sm font-mono ' + (d.heap > 50000
-          ? 'text-green-600 dark:text-green-400'
-          : d.heap > 20000 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-500 dark:text-red-400');
+        let mem = (d.heap / 1024).toFixed(1) + ' KB';
+        if (typeof d.max_alloc_heap === 'number' && d.max_alloc_heap > 0) {
+          const frag = Math.round((1 - d.max_alloc_heap / d.heap) * 100);
+          mem += ` (frag. ${frag}%)`;
+        }
+        $dbgMemory.textContent = mem;
       }
-      if (d.description != null) $navTitle.textContent = d.description || 'muhpark';
-      if (d.hostname)     $dbgHost.textContent  = d.hostname;
-      if (d.ip)           $dbgIp.textContent    = d.ip;
-      if (d.ssid)         $dbgSsid.textContent  = d.ssid;
-      if (d.reset_reason) $dbgReset.textContent = d.reset_reason;
-      if (typeof d.display === 'boolean') {
-        $dbgDisplay.textContent = d.display ? 'ON' : 'OFF';
-        $dbgDisplay.className   = 'text-sm font-mono ' + (d.display
-          ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500');
+
+      if (d.hostname || d.description != null) {
+        const base = d.hostname || d.description || 'muhpark';
+        document.title = base;
+        $navTitle.textContent = d.description || d.hostname || 'muhpark';
       }
       if (d.version && !$version.textContent.includes(d.version)) {
         const a = document.createElement('a');

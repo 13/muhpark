@@ -22,7 +22,7 @@ static void publishStatus() {
                     ? WiFi.localIP().toString()
                     : WiFi.softAPIP().toString();
 
-    snprintf(topic, sizeof(topic), "%s/%s",         cfg.mqtt_base, deviceId);
+    snprintf(topic, sizeof(topic), "%s/%s/LWT",      cfg.mqtt_base, deviceId);
     mqttClient.publish(topic, "online", true);
 
     snprintf(topic, sizeof(topic), "%s/%s/IP",      cfg.mqtt_base, deviceId);
@@ -40,7 +40,7 @@ static bool reconnect() {
 
     char lwtTopic[96] = {};
     if (*cfg.mqtt_base)
-        snprintf(lwtTopic, sizeof(lwtTopic), "%s/%s", cfg.mqtt_base, deviceId);
+        snprintf(lwtTopic, sizeof(lwtTopic), "%s/%s/LWT", cfg.mqtt_base, deviceId);
 
     Serial.printf("[mqtt] connecting to %s:%d ...", cfg.mqtt_server, cfg.mqtt_port);
 

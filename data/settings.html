@@ -14,9 +14,8 @@
 </head>
 <body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col">
 
-  <div class="h-1 bg-transparent"></div>
-
-  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+  <div class="sticky top-0 z-10">
+  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
         <img src="/img/muhpark.png" alt="" class="w-7 h-7" />
@@ -33,111 +32,124 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
         </a>
         <button id="themeBtn" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors"></button>
+        <button onclick="location.reload()" title="Refresh" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd"/></svg>
+        </button>
       </div>
     </div>
   </nav>
+  </div>
 
   <main class="flex-1 py-4">
     <div class="max-w-2xl mx-auto px-4 flex flex-col gap-4">
 
-      <!-- Device section -->
+      <!-- Device section (open by default) -->
       <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Device</span>
-        </div>
-        <div class="p-4 flex flex-col gap-3">
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Description</span>
-            <input id="description" type="text" maxlength="63" placeholder="e.g. Garage Sensor"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-          </label>
+        <button id="dev-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+          <span>Device</span>
+          <svg id="dev-chev" class="w-4 h-4 transition-transform duration-200 rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+        </button>
+        <div id="dev-body" class="border-t border-gray-100 dark:border-gray-800">
+          <div class="p-4 flex flex-col gap-3">
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Description</span>
+              <input id="description" type="text" maxlength="63" placeholder="e.g. Garage Sensor"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- WiFi section -->
+      <!-- WiFi section (collapsed by default) -->
       <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">WiFi</span>
-        </div>
-        <div class="p-4 flex flex-col gap-3">
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">SSID</span>
-            <input id="wifi_ssid" type="text" maxlength="63" placeholder="Network name"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Password</span>
-            <div class="relative">
-              <input id="wifi_pass" type="password" maxlength="63" placeholder="leave blank to keep current"
-                     class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                            px-3 py-2 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+        <button id="wifi-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+          <span>WiFi</span>
+          <svg id="wifi-chev" class="w-4 h-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+        </button>
+        <div id="wifi-body" class="hidden border-t border-gray-100 dark:border-gray-800">
+          <div class="p-4 flex flex-col gap-3">
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">SSID</span>
+              <input id="wifi_ssid" type="text" maxlength="63" placeholder="Network name"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
                             text-gray-900 dark:text-gray-100 min-h-[44px]" />
-              <button type="button" data-toggle="wifi_pass"
-                      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600
-                             dark:hover:text-gray-200 px-1 py-1 min-h-[36px]">Show</button>
-            </div>
-          </label>
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Password</span>
+              <div class="relative">
+                <input id="wifi_pass" type="password" maxlength="63" placeholder="leave blank to keep current"
+                       class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                              px-3 py-2 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                              text-gray-900 dark:text-gray-100 min-h-[44px]" />
+                <button type="button" data-toggle="wifi_pass"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600
+                               dark:hover:text-gray-200 px-1 py-1 min-h-[36px]">Show</button>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- MQTT section -->
+      <!-- MQTT section (collapsed by default) -->
       <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-          <span class="text-sm font-medium text-gray-500 dark:text-gray-400">MQTT</span>
-        </div>
-        <div class="p-4 flex flex-col gap-3">
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Base topic</span>
-            <input id="mqtt_base" type="text" maxlength="63" placeholder="muh/esp"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-            <span class="text-xs text-gray-400 dark:text-gray-500">Publishes {base}/esp32-XXXX = online/offline · /IP · /VERSION</span>
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Data topic</span>
-            <input id="mqtt_topic" type="text" maxlength="63" placeholder="muh/parking/park-XXXX"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Server</span>
-            <input id="mqtt_server" type="text" maxlength="63" placeholder="192.168.1.1"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Port</span>
-            <input id="mqtt_port" type="number" min="1" max="65535" placeholder="1883"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Username</span>
-            <input id="mqtt_user" type="text" maxlength="31" placeholder="optional"
-                   class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                          px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                          text-gray-900 dark:text-gray-100 min-h-[44px]" />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Password</span>
-            <div class="relative">
-              <input id="mqtt_pass" type="password" maxlength="63" placeholder="leave blank to keep current"
-                     class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
-                            px-3 py-2 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+        <button id="mqtt-toggle" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+          <span>MQTT</span>
+          <svg id="mqtt-chev" class="w-4 h-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+        </button>
+        <div id="mqtt-body" class="hidden border-t border-gray-100 dark:border-gray-800">
+          <div class="p-4 flex flex-col gap-3">
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Base topic</span>
+              <input id="mqtt_base" type="text" maxlength="63" placeholder="muh/esp"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
                             text-gray-900 dark:text-gray-100 min-h-[44px]" />
-              <button type="button" data-toggle="mqtt_pass"
-                      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600
-                             dark:hover:text-gray-200 px-1 py-1 min-h-[36px]">Show</button>
-            </div>
-          </label>
+              <span class="text-xs text-gray-400 dark:text-gray-500">Publishes {base}/esp32-XXXX = online/offline · /IP · /VERSION</span>
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Data topic</span>
+              <input id="mqtt_topic" type="text" maxlength="63" placeholder="muh/parking/park-XXXX"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Server</span>
+              <input id="mqtt_server" type="text" maxlength="63" placeholder="192.168.1.1"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Port</span>
+              <input id="mqtt_port" type="number" min="1" max="65535" placeholder="1883"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Username</span>
+              <input id="mqtt_user" type="text" maxlength="31" placeholder="optional"
+                     class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                            px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                            text-gray-900 dark:text-gray-100 min-h-[44px]" />
+            </label>
+            <label class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Password</span>
+              <div class="relative">
+                <input id="mqtt_pass" type="password" maxlength="63" placeholder="leave blank to keep current"
+                       class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800
+                              px-3 py-2 pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                              text-gray-900 dark:text-gray-100 min-h-[44px]" />
+                <button type="button" data-toggle="mqtt_pass"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600
+                               dark:hover:text-gray-200 px-1 py-1 min-h-[36px]">Show</button>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -182,6 +194,17 @@
     applyTheme(html.classList.contains('dark'));
     themeBtn.addEventListener('click', () => applyTheme(!html.classList.contains('dark')));
 
+    // ── Collapsibles ───────────────────────────────────────────────────────────
+    function makeToggle(btnId, bodyId, chevId) {
+      document.getElementById(btnId).addEventListener('click', () => {
+        const nowHidden = document.getElementById(bodyId).classList.toggle('hidden');
+        document.getElementById(chevId).style.transform = nowHidden ? '' : 'rotate(180deg)';
+      });
+    }
+    makeToggle('dev-toggle',  'dev-body',  'dev-chev');
+    makeToggle('wifi-toggle', 'wifi-body', 'wifi-chev');
+    makeToggle('mqtt-toggle', 'mqtt-body', 'mqtt-chev');
+
     // ── DOM refs ───────────────────────────────────────────────────────────────
     const saveBtn   = document.getElementById('saveBtn');
     const statusMsg = document.getElementById('statusMsg');
@@ -207,7 +230,9 @@
     fetch('/api/settings')
       .then(r => r.json())
       .then(d => {
-        navTitle.textContent = d.description || 'muhpark';
+        const base = d.hostname || d.description || 'muhpark';
+        document.title = `${base} — Settings`;
+        navTitle.textContent = d.description || d.hostname || 'muhpark';
         for (const id of FIELDS) {
           const el = document.getElementById(id);
           if (!el || el.type === 'password') continue;

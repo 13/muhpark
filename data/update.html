@@ -14,9 +14,10 @@
 </head>
 <body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex flex-col">
 
+  <div class="sticky top-0 z-10">
   <div id="ws-bar" class="h-1 transition-colors duration-300"></div>
 
-  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+  <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
         <img src="/img/muhpark.png" alt="" class="w-7 h-7" />
@@ -33,9 +34,13 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
         </a>
         <button id="themeBtn" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors"></button>
+        <button onclick="location.reload()" title="Refresh" class="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd"/></svg>
+        </button>
       </div>
     </div>
   </nav>
+  </div>
 
   <!-- Tailwind safelist -->
   <div class="hidden bg-green-500 bg-red-500
@@ -102,6 +107,12 @@
   <div id="updateModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
     <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-center w-full max-w-sm">
       <div id="spinner" class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <div id="successIcon" class="hidden w-10 h-10 mx-auto mb-4 text-green-500">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-opacity=".25"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 20l6 6 10-12"/>
+        </svg>
+      </div>
       <p id="modalStep" class="font-semibold text-gray-900 dark:text-white text-base"></p>
       <p id="modalMsg"  class="text-gray-500 dark:text-gray-400 text-sm mt-1"></p>
     </div>
@@ -125,17 +136,18 @@
     themeBtn.addEventListener('click', () => applyTheme(!html.classList.contains('dark')));
 
     // ── DOM refs ───────────────────────────────────────────────────────────────
-    const wsBar      = document.getElementById('ws-bar');
-    const elFile     = document.getElementById('file');
-    const elHint     = document.getElementById('fileHint');
-    const elDropZone = document.getElementById('dropZone');
-    const elUploadBtn = document.getElementById('uploadBtn');
-    const elModal    = document.getElementById('updateModal');
-    const elStep     = document.getElementById('modalStep');
-    const elMsg      = document.getElementById('modalMsg');
-    const elSpinner  = document.getElementById('spinner');
-    const elVersion  = document.getElementById('version');
-    const navTitle   = document.getElementById('navTitle');
+    const wsBar        = document.getElementById('ws-bar');
+    const elFile       = document.getElementById('file');
+    const elHint       = document.getElementById('fileHint');
+    const elDropZone   = document.getElementById('dropZone');
+    const elUploadBtn  = document.getElementById('uploadBtn');
+    const elModal      = document.getElementById('updateModal');
+    const elStep       = document.getElementById('modalStep');
+    const elMsg        = document.getElementById('modalMsg');
+    const elSpinner    = document.getElementById('spinner');
+    const elSuccess    = document.getElementById('successIcon');
+    const elVersion    = document.getElementById('version');
+    const navTitle     = document.getElementById('navTitle');
 
     // ── WebSocket (for nav title + version) ────────────────────────────────────
     function setWsBar(state) {
@@ -152,7 +164,11 @@
       ws.onclose = () => { setWsBar('disconnected'); setTimeout(connect, 10_000); };
       ws.onmessage = (e) => {
         const d = JSON.parse(e.data);
-        if (d.description != null) navTitle.textContent = d.description || 'muhpark';
+        if (d.hostname || d.description != null) {
+          const base = d.hostname || d.description || 'muhpark';
+          document.title = `${base} — Firmware`;
+          navTitle.textContent = d.description || d.hostname || 'muhpark';
+        }
         if (d.version && d.version !== prevVersion) {
           prevVersion = d.version;
           const a = document.createElement('a');
@@ -201,16 +217,22 @@
 
     // ── Modal ──────────────────────────────────────────────────────────────────
     function showModal(step, msg = '') {
+      elSpinner.classList.remove('hidden');
+      elSuccess.classList.add('hidden');
       elStep.textContent = step;
       elMsg.textContent  = msg;
-      elSpinner.classList.remove('hidden');
       elModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
-    function setModalMsg(step, msg = '', hideSpinner = false) {
+    function setModalMsg(step, msg = '') {
       elStep.textContent = step;
       elMsg.textContent  = msg;
-      if (hideSpinner) elSpinner.classList.add('hidden');
+    }
+    function showModalSuccess(step, msg = '') {
+      elSpinner.classList.add('hidden');
+      elSuccess.classList.remove('hidden');
+      elStep.textContent = step;
+      elMsg.textContent  = msg;
     }
     function hideModal() {
       elModal.classList.add('hidden');
@@ -221,9 +243,13 @@
       let tries = 0;
       (function check() {
         fetch('/ping')
-          .then(r  => { if (r.ok) { hideModal(); setTimeout(() => location.reload(), 1500); }
-                        else if (++tries < 60) setTimeout(check, 2000);
-                        else hideModal(); })
+          .then(r  => {
+            if (r.ok) {
+              showModalSuccess('Update complete', 'Device is back online.');
+              setTimeout(() => { hideModal(); location.reload(); }, 2000);
+            } else if (++tries < 60) setTimeout(check, 2000);
+            else hideModal();
+          })
           .catch(() => { if (++tries < 60) setTimeout(check, 2000); else hideModal(); });
       })();
     }
@@ -256,7 +282,8 @@
         const p = document.createElement('p');
         p.className   = 'text-red-600 dark:text-red-400 font-medium';
         p.textContent = err.message;
-        setModalMsg('Update failed', '', true);
+        elSpinner.classList.add('hidden');
+        elStep.textContent = 'Update failed';
         elMsg.replaceChildren(p);
         setTimeout(hideModal, 5000);
       }
