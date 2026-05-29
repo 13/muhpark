@@ -37,6 +37,7 @@ static void publishStatus() {
 static bool reconnect() {
     if (WiFi.status() != WL_CONNECTED) return false;
     const Config& cfg = Cfg::get();
+    if (!*cfg.mqtt_server) return false;
 
     char lwtTopic[96] = {};
     if (*cfg.mqtt_base)
@@ -62,6 +63,10 @@ void Mqtt::begin() {
     WiFi.macAddress(mac);
     snprintf(deviceId,     sizeof(deviceId),     "esp32-%02X%02X",        mac[4], mac[5]);
     snprintf(defaultTopic, sizeof(defaultTopic), "muh/parking/park-%02X%02X", mac[4], mac[5]);
+
+    // Default is 15 s; that long a stall in connect() freezes sensor/display and
+    // can trip the watchdog when the broker is unreachable. Keep it short.
+    mqttClient.setSocketTimeout(2);
 
     const Config& cfg = Cfg::get();
     if (!*cfg.mqtt_server) return;

@@ -122,8 +122,8 @@ void Sensor::update(ParkState& s, const Config& cfg) {
 #else
 
 static constexpr int   FILTER_SIZE = 7;
-static constexpr float INNER_CLOSER[5]  = { 25.f,  50.f, 100.f, 150.f, 200.f };
-static constexpr float INNER_FARTHER[5] = { 28.f,  55.f, 110.f, 165.f, 220.f };
+static constexpr float INNER_CLOSER[5]  = { 15.f,  50.f, 100.f, 150.f, 200.f };
+static constexpr float INNER_FARTHER[5] = { 28.f,  65.f, 110.f, 165.f, 220.f };
 
 static VL53L1X sensor;
 

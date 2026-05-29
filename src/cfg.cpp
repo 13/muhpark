@@ -44,7 +44,7 @@ void Cfg::load() {
     if (!f) { Serial.println("[cfg] using defaults"); return; }
     JsonDocument doc;
     if (deserializeJson(doc, f) == DeserializationError::Ok) {
-        cfg.activate_dist = constrain(doc["activate_dist"]  | cfg.activate_dist,  250.f, 500.f);
+        cfg.activate_dist = constrain(doc["activate_dist"]  | cfg.activate_dist,  100.f, 500.f);
         cfg.offset        = constrain(doc["offset"]         | cfg.offset,         -100.f, 100.f);
         cfg.brightness    = constrain((int)(doc["brightness"]    | (int)cfg.brightness), 0, 15);
         cfg.sleep_timeout = constrain((uint32_t)(int)(doc["sleep_timeout"] | (int)cfg.sleep_timeout), 10UL, 300UL);
@@ -98,7 +98,7 @@ bool Cfg::apply(JsonObject& obj) {
 
     if (!obj["brightness"].isNull())    { cfg.brightness    = constrain((int)obj["brightness"],                     0,     15);    changed = true; }
     if (!obj["sleep_timeout"].isNull()) { cfg.sleep_timeout = constrain((uint32_t)(int)obj["sleep_timeout"],        10UL,  300UL); changed = true; }
-    if (!obj["activate_dist"].isNull()) { cfg.activate_dist = constrain((float)obj["activate_dist"],               250.f, 500.f); changed = true; }
+    if (!obj["activate_dist"].isNull()) { cfg.activate_dist = constrain((float)obj["activate_dist"],               100.f, 500.f); changed = true; }
     if (!obj["offset"].isNull())        { cfg.offset        = constrain((float)obj["offset"],                     -100.f, 100.f); changed = true; }
     if (!obj["mqtt_port"].isNull())     { cfg.mqtt_port     = constrain((int)obj["mqtt_port"],                       1,  65535);  changed = true; }
     applyStr("description", cfg.description, sizeof(cfg.description));

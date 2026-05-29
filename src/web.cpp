@@ -49,7 +49,9 @@ static const char* resetReasonStr() {
 }
 
 static void broadcast(const ParkState& s) {
-    if (wsServer.count() == 0) return;
+    // Skip if nobody's listening, or if a client's send queue is full — otherwise
+    // we churn heap building messages that get dropped, fragmenting it over time.
+    if (wsServer.count() == 0 || !wsServer.availableForWriteAll()) return;
     const Config& cfg = Cfg::get();
 
     JsonDocument doc;
@@ -242,5 +244,10 @@ void Web::loop() {
 }
 
 void Web::notify(const ParkState& s) {
+    // Called every sensor cycle (~10 Hz). Share the loop throttle so state changes
+    // push promptly but we never broadcast faster than WS_BROADCAST_MS.
+    uint32_t now = millis();
+    if (now - lastBroadcastMs < WS_BROADCAST_MS) return;
+    lastBroadcastMs = now;
     broadcast(s);
 }
